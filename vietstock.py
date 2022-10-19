@@ -10,13 +10,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from webdriver_manager.chrome import ChromeDriverManager
 
 # for static sites
 options = ChromeOptions()
 options.headless = True
 
-service = Service(executable_path=r'C:\WebDriver\bin\chromedriver')  # Local path tới chrome
-driver = Chrome(service=service, options=options)
+#service = Service(executable_path=r'C:\WebDriver\bin\chromedriver')  # Local path tới chrome
+driver = Chrome(ChromeDriverManager().install(), options=options)
 
 # TODO: Suy nghĩ các lựa chọn để tối ưu
 """
