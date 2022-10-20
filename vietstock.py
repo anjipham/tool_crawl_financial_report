@@ -63,7 +63,7 @@ for index, stock in enumerate(stocks):
 
     #  Tìm link download
     soup = BeautifulSoup(driver.page_source, features="html.parser")
-    elements_by_soup = soup.select('a[class = "text-link"]')  # bs4.element.Tag'
+    elements_by_soup = soup.select('a.text-link')  # bs4.element.Tag'
     pattern = "{}.*NAM".format(year)
     for element in elements_by_soup:
         if re.search(pattern, element.get('href')):
@@ -97,7 +97,7 @@ for index, stock in enumerate(stocks):
         print("Timeout happened no page load")
 
     soup = BeautifulSoup(driver.page_source, features="html.parser")
-    elements_by_soup = soup.select('a[class = "text-link"]')  # bs4.element.Tag'
+    elements_by_soup = soup.select('a.text-link')  # bs4.element.Tag'
     pattern = "{}".format(year)  # Thay đổi pattern
     for element in elements_by_soup:
         if re.search(pattern, element.get('href')):
