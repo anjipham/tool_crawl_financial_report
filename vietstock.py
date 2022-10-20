@@ -11,13 +11,22 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
+
 
 # for static sites
-options = ChromeOptions()
-options.headless = True
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-dev-shm-usage')
+
+
+#options = ChromeOptions()
+#options.headless = True
 
 #service = Service(executable_path=r'C:\WebDriver\bin\chromedriver')  # Local path tới chrome
-driver = Chrome(ChromeDriverManager().install(), options=options)
+driver = webdriver.Chrome('chromedriver',options=chrome_options)
 
 # TODO: Suy nghĩ các lựa chọn để tối ưu
 """
