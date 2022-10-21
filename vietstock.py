@@ -79,7 +79,7 @@ for index, stock in enumerate(stocks):
         #  Test lai repsonse xem co bi set gioi han request ko
         print("Vong : " + str(count) + " Trang thai: " + str(response.status_code) + " link: " + link)
         pdfFile = open(
-            os.path.join(path + '\\' + str(df.iloc[index, 3]), os.path.basename(link)), 'wb')
+            os.path.join(path + '/' + str(df.iloc[index, 3]), os.path.basename(link)), 'wb')
         for chunk in response.iter_content(100000):
             pdfFile.write(chunk)
         pdfFile.close()
@@ -116,7 +116,7 @@ for index, stock in enumerate(stocks):
         #  Test lai repsonse xem co bi set gioi han request ko
         print("Vong : " + str(count) + " Trang thai: " + str(response.status_code) + " link: " + link)
         pdfFile = open(
-            os.path.join(path + '\\' + str(df.iloc[index, 3]), os.path.basename(link)), 'wb')
+            os.path.join(path + '/' + str(df.iloc[index, 3]), os.path.basename(link)), 'wb')
         for chunk in response.iter_content(100000):
             pdfFile.write(chunk)
         pdfFile.close()
