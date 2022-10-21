@@ -47,7 +47,7 @@ count = 0
 
 for index, stock in enumerate(stocks):
     #  0. Tạo folder tương ứng chứa dữ liệu
-    os.makedirs(path + '\\' + str(df.iloc[index, 3]), exist_ok=True)  # tạo folder chứa file
+    os.makedirs(path + '/' + str(df.iloc[index, 3]), exist_ok=True)  # tạo folder chứa file
     links = []
 
     # 1. Tải BCTC
