@@ -1,16 +1,16 @@
-from selenium.webdriver import Chrome
-from selenium.webdriver import ChromeOptions
-from selenium.webdriver.chrome.service import Service
-from bs4 import BeautifulSoup
 import re
 import os
 import requests
 import pandas as pd
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver import Chrome
+from selenium.webdriver import ChromeOptions
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.by import By
-from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 
