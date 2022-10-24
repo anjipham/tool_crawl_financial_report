@@ -13,23 +13,26 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import WebDriverException
 
-
 # set options for selenium can performance on colab
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument('--headless')
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument('--disable-dev-shm-usage')
-
 driver = webdriver.Chrome('chromedriver',options=chrome_options)
 
+# set the default value for input
+d_path = "/content/drive/MyDrive/repository"
+d_file = "stock_list.xlsx"
+d_year = "2021"
+
 # TODO: Suy nghĩ các lựa chọn để tối ưu
-path = input("Nhập đường dẫn tới folder chứa file data\n")  # Nhập liệu
-file = input("Nhập tên file ví dụ: Ma_CK_Betong.xlsx\n")  # Nhập liệu
-year = input("Nhập năm muốn lấy báo cáo, ví dụ: 2021\n")  # Nhập liệu
+path = input("Nhập đường dẫn tới folder chứa file data\n") or d_path  # Nhập liệu
+file = input("Nhập tên file chứa danh sách mã chứng khoán đã upload\n") or d_file  # Nhập liệu
+year = input("Nhập năm muốn lấy báo cáo tài chính\n") or d_year  # Nhập liệu
 
 file_ma_ck = os.path.join(path, file)
 df = pd.read_excel(file_ma_ck)
-stocks = df['Mã CK Stockbiz + Vietstock']  #
+stocks = df['Mã CK Stockbiz + Vietstock']
 #  dem vong
 count = 0
 
@@ -38,7 +41,7 @@ for index, stock in enumerate(stocks):
     os.makedirs(path + '/' + str(df.iloc[index, 3]), exist_ok=True)
 
     # 1. crawl link download BCTC
-    BCTC = 'https://finance.vietstock.vn//{}/tai-tai-lieu.htm?doctype=1'.format(stock)  # có thể fix lại cho gọn hơn
+    BCTC = 'https://finance.vietstock.vn//{}/tai-tai-lieu.htm?doctype=1'.format(stock.strip())  # feed stock
     driver.get(BCTC)
     #  presence_of_element_located expected condition wait for 8 seconds
     try:
@@ -53,14 +56,14 @@ for index, stock in enumerate(stocks):
     elements_by_soup = soup.select('a.text-link')
     pattern = "{}.*NAM".format(year)    # set pattern mong muốn 
     links = []  # Tạo list để chứa links tìm được
-    
+
     for element in elements_by_soup:
         if re.search(pattern, element.get('href')):
             links.append(element.get('href'))  # Tạo danh sách link download
             df.iloc[index, 4] = "yes"          # Điền vào dánh sách tổng kết
 
     # 2. crawl link download BCTN
-    BCTN = 'https://finance.vietstock.vn//{}/tai-tai-lieu.htm?doctype=2'.format(stock)
+    BCTN = 'https://finance.vietstock.vn//{}/tai-tai-lieu.htm?doctype=2'.format(stock.strip())  # feed stock
     driver.get(BCTN)  # Thay đổi pattern
     #  presence_of_element_located expected condition wait for 8 seconds
     try:
@@ -69,17 +72,17 @@ for index, stock in enumerate(stocks):
         print("Page load happened")
     except TimeoutException:
         print("Timeout happened no page load")
-        
+
     #  Tìm link download từ html đã load by selenium
     soup = BeautifulSoup(driver.page_source, features="html.parser")
     elements_by_soup = soup.select('a.text-link')  # bs4.element.Tag'
     pattern = "{}".format(year)  # Thay đổi pattern
-    
+
     for element in elements_by_soup:
         if re.search(pattern, element.get('href')):
             links.append(element.get('href'))       # Tạo danh sách link download          
             df.iloc[index,5] = "yes"                # Điền vào dánh sách tổng kết
-            
+
     #  3. Tải file về folder dựa trên links đã lọc
     for link in links:
         # Dem vong
