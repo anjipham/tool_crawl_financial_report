@@ -88,7 +88,7 @@ for index, stock in enumerate(stocks):
         # Dem vong
         count += 1
         response = requests.get(link, stream=True)
-        print("Vong : " + str(count) + " Trang thai: " + str(response.status_code) + " link: " + link)
+        print("Loop : " + str(count) + " Trang thai: " + str(response.status_code) + " link: " + link)
         pdfFile = open(
             os.path.join(path + '/' + str(df.iloc[index, 3]), os.path.basename(link)), 'wb')
         for chunk in response.iter_content(100000):
