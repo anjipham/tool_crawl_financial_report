@@ -14,11 +14,12 @@ from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import WebDriverException
 
 # set options for selenium can performance on colab
+service = Service(executable_path=r'/usr/bin/chromedriver')
 options = Options()
 options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
-driver = webdriver.Chrome('chromedriver',options=options)
+driver = webdriver.Chrome(service=service,options=options)
 
 # set the default value for input
 d_path = "/content/drive/MyDrive/repository"
