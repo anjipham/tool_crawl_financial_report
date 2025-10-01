@@ -4,37 +4,38 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import WebDriverException
 
-# ----------------------
-# Cấu hình selenium
-# ----------------------
+# set options for selenium can performance on colab
 service = Service(executable_path=r'/usr/bin/chromedriver')
 options = Options()
 options.add_argument('--headless')
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
-driver = webdriver.Chrome(service=service, options=options)
+driver = webdriver.Chrome(service=service,options=options)
 
-# ----------------------
-# Thông số mặc định
-# ----------------------
+# set the default value for input
 d_path = "/content/drive/MyDrive/repository"
 d_file = "stock_list.xlsx"
-d_year = "2021"
+d_year = "2024"
 
-path = input("Nhập đường dẫn tới folder chứa file data\n") or d_path
-file = input("Nhập tên file chứa danh sách mã chứng khoán đã upload\n") or d_file
-year = input("Nhập năm muốn lấy báo cáo tài chính\n") or d_year
+# TODO: Suy nghĩ các lựa chọn để tối ưu
+path = input("Nhập đường dẫn tới folder chứa file data\n") or d_path  # Nhập liệu
+file = input("Nhập tên file chứa danh sách mã chứng khoán đã upload\n") or d_file  # Nhập liệu
+year = input("Nhập năm muốn lấy báo cáo tài chính\n") or d_year  # Nhập liệu
 
 file_ma_ck = os.path.join(path, file)
 df = pd.read_excel(file_ma_ck)
 stocks = df['Mã CK Stockbiz + Vietstock']
+#  dem vong
+count = 0
 
 # Thêm cột mới nếu chưa có
 for col in ["Có BCTC", "Có BCTN", "Link BCTC", "Link BCTN"]:
@@ -107,9 +108,7 @@ for index, stock in enumerate(stocks):
 
 driver.quit()
 
-# ----------------------
-# Lưu kết quả cuối
-# ----------------------
-result = os.path.join(path, "result.xlsx")
-df.to_excel(result, index=False, header=True)
-print("Hoàn tất, kết quả lưu tại:", result)
+# 4 Ghi và lưu file danh sách kết quả
+result = 'result.xlsx'
+Name = os.path.join(path, result)
+df.to_excel(Name, index=False, header=True)
