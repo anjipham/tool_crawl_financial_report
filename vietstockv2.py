@@ -68,41 +68,60 @@ def get_links(url, pattern):
 # ----------------------
 count = 0
 # Download BCTC
-for link in links_bctc:
-    count += 1
-    try:
-        response = requests.get(link, stream=True, timeout=15)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Lỗi tải {link}: {e}")
-        continue
+for index, stock in enumerate(stocks):
+    stock_code = str(df.iloc[index, 3])  # lấy mã công ty
 
-    file_name = f"{stock_code}_BCTC_{year}_{os.path.basename(link)}"
-    save_path = os.path.join(bctc_folder, file_name)
-    with open(save_path, 'wb') as pdfFile:
-        for chunk in response.iter_content(100000):
-            pdfFile.write(chunk)
+    # --- Crawl BCTC ---
+    links_bctc = []
+    bctc_url = f'https://finance.vietstock.vn/{stock.strip()}/tai-tai-lieu.htm?doctype=1'
+    links_bctc = get_links(bctc_url, f"{year}.*NAM")
+    if links_bctc:
+        df.loc[index, "Có BCTC"] = "yes"
+        df.loc[index, "Link BCTC"] = "; ".join(links_bctc)
 
-    print(f"Loop {count}: Đã lưu {save_path}")
+    # --- Crawl BCTN ---
+    links_bctn = []
+    bctn_url = f'https://finance.vietstock.vn/{stock.strip()}/tai-tai-lieu.htm?doctype=2'
+    links_bctn = get_links(bctn_url, f"{year}")
+    if links_bctn:
+        df.loc[index, "Có BCTN"] = "yes"
+        df.loc[index, "Link BCTN"] = "; ".join(links_bctn)
 
-# Download BCTN
-for link in links_bctn:
-    count += 1
-    try:
-        response = requests.get(link, stream=True, timeout=15)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Lỗi tải {link}: {e}")
-        continue
+    # --- Download BCTC ---
+    for link in links_bctc:
+        count += 1
+        try:
+            response = requests.get(link, stream=True, timeout=15)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            print(f"Lỗi tải {link}: {e}")
+            continue
 
-    file_name = f"{stock_code}_BCTN_{year}_{os.path.basename(link)}"
-    save_path = os.path.join(bctn_folder, file_name)
-    with open(save_path, 'wb') as pdfFile:
-        for chunk in response.iter_content(100000):
-            pdfFile.write(chunk)
+        file_name = f"{stock_code}_BCTC_{year}_{os.path.basename(link)}"
+        save_path = os.path.join(bctc_folder, file_name)
+        with open(save_path, 'wb') as pdfFile:
+            for chunk in response.iter_content(100000):
+                pdfFile.write(chunk)
 
-    print(f"Loop {count}: Đã lưu {save_path}")
+        print(f"Loop {count}: Đã lưu {save_path}")
 
+    # --- Download BCTN ---
+    for link in links_bctn:
+        count += 1
+        try:
+            response = requests.get(link, stream=True, timeout=15)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            print(f"Lỗi tải {link}: {e}")
+            continue
+
+        file_name = f"{stock_code}_BCTN_{year}_{os.path.basename(link)}"
+        save_path = os.path.join(bctn_folder, file_name)
+        with open(save_path, 'wb') as pdfFile:
+            for chunk in response.iter_content(100000):
+                pdfFile.write(chunk)
+
+        print(f"Loop {count}: Đã lưu {save_path}")
 driver.quit()
 
 # 4 Ghi và lưu file danh sách kết quả
