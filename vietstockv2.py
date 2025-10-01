@@ -67,44 +67,41 @@ def get_links(url, pattern):
 # Bắt đầu crawl
 # ----------------------
 count = 0
-for index, stock in enumerate(stocks):
-    stock_code = str(df.iloc[index, 3])  # Lấy mã công ty
+# Download BCTC
+for link in links_bctc:
+    count += 1
+    try:
+        response = requests.get(link, stream=True, timeout=15)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Lỗi tải {link}: {e}")
+        continue
 
-    # Crawl BCTC (doctype=1)
-    bctc_url = f'https://finance.vietstock.vn/{stock.strip()}/tai-tai-lieu.htm?doctype=1'
-    links_bctc = get_links(bctc_url, f"{year}.*NAM")
-    if links_bctc:
-        df.loc[index, "Có BCTC"] = "yes"
-        df.loc[index, "Link BCTC"] = "; ".join(links_bctc)
+    file_name = f"{stock_code}_BCTC_{year}_{os.path.basename(link)}"
+    save_path = os.path.join(bctc_folder, file_name)
+    with open(save_path, 'wb') as pdfFile:
+        for chunk in response.iter_content(100000):
+            pdfFile.write(chunk)
 
-    # Crawl BCTN (doctype=2)
-    bctn_url = f'https://finance.vietstock.vn/{stock.strip()}/tai-tai-lieu.htm?doctype=2'
-    links_bctn = get_links(bctn_url, f"{year}")
-    if links_bctn:
-        df.loc[index, "Có BCTN"] = "yes"
-        df.loc[index, "Link BCTN"] = "; ".join(links_bctn)
+    print(f"Loop {count}: Đã lưu {save_path}")
 
-    # Download tất cả file
-    for link in links_bctc + links_bctn:
-        count += 1
-        try:
-            response = requests.get(link, stream=True, timeout=15)
-            response.raise_for_status()
-        except requests.RequestException as e:
-            print(f"Lỗi tải {link}: {e}")
-            continue
+# Download BCTN
+for link in links_bctn:
+    count += 1
+    try:
+        response = requests.get(link, stream=True, timeout=15)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Lỗi tải {link}: {e}")
+        continue
 
-        # Đặt tên file
-        loai_bc = "BCTC" if "doctype=1" in link else "BCTN"
-        file_name = f"{stock_code}_{loai_bc}_{year}_{os.path.basename(link)}"
+    file_name = f"{stock_code}_BCTN_{year}_{os.path.basename(link)}"
+    save_path = os.path.join(bctn_folder, file_name)
+    with open(save_path, 'wb') as pdfFile:
+        for chunk in response.iter_content(100000):
+            pdfFile.write(chunk)
 
-        # Lưu đúng folder
-        save_path = os.path.join(bctc_folder if loai_bc == "BCTC" else bctn_folder, file_name)
-        with open(save_path, 'wb') as pdfFile:
-            for chunk in response.iter_content(100000):
-                pdfFile.write(chunk)
-
-        print(f"Loop {count}: Đã lưu {save_path}")
+    print(f"Loop {count}: Đã lưu {save_path}")
 
 driver.quit()
 
