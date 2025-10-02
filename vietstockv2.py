@@ -29,7 +29,7 @@ d_year = "2024"
 # TODO: Suy nghĩ các lựa chọn để tối ưu
 path = input("Nhập đường dẫn tới folder chứa file data\n") or d_path  # Nhập liệu
 file = input("Nhập tên file chứa danh sách mã chứng khoán đã upload\n") or d_file  # Nhập liệu
-year = input("Nhập năm muốn lấy báo cáo tài chính\n") or d_year  # Nhập liệu
+year = input("Nhập năm muốn lấy báo cáo tài chính. Ví dụ: 2024. Sau đó nhấn Enter, chờ 30s và đợi phép màu thôi \n") or d_year  # Nhập liệu
 
 file_ma_ck = os.path.join(path, file)
 df = pd.read_excel(file_ma_ck)
